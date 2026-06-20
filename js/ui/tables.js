@@ -25,7 +25,7 @@ function renderBasalTable(basal) {
 
         const row = basal[h];
 
-        const highlight = row.cleanBasal ? 'style="background:#f3faf3"' : '';
+        const highlight = row.cleanBasal ? 'style="background:#232b26"' : '';
 
         html += `
             <tr ${highlight}>
