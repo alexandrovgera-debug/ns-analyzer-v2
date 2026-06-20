@@ -29,16 +29,14 @@ export default class ISFAnalyzer {
 
                 if (hour >= start && hour < end) {
                     sum += (row.sr ?? 1);
-                    count += 1;
+                    count++;
                 }
             }
-
-            const avg = count ? sum / count : 1;
 
             result.push({
                 start,
                 end,
-                srAvg: avg,
+                srAvg: count ? sum / count : 1,
                 isf: current.value
             });
         }
@@ -54,13 +52,12 @@ export default class ISFAnalyzer {
         for (const i of intervalSR) {
 
             const currentISF = i.isf;
-
-            // логика: если SR > 1 → чувствительность выше → ISF уменьшается
             const factor = 1 / (i.srAvg || 1);
 
             result.push({
                 start: i.start,
                 end: i.end,
+                srAvg: i.srAvg,
                 currentISF,
                 suggestedISF: currentISF * factor
             });
