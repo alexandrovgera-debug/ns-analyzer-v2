@@ -29,16 +29,14 @@ export default class CRAnalyzer {
 
                 if (hour >= start && hour < end) {
                     sum += (row.sr ?? 1);
-                    count += 1;
+                    count++;
                 }
             }
-
-            const avg = count ? sum / count : 1;
 
             result.push({
                 start,
                 end,
-                srAvg: avg,
+                srAvg: count ? sum / count : 1,
                 cr: current.value
             });
         }
@@ -54,13 +52,12 @@ export default class CRAnalyzer {
         for (const i of intervalSR) {
 
             const currentCR = i.cr;
-
-            // SR > 1 → чувствительность выше → углеводы "сильнее" → CR уменьшается
             const factor = 1 / (i.srAvg || 1);
 
             result.push({
                 start: i.start,
                 end: i.end,
+                srAvg: i.srAvg,
                 currentCR,
                 suggestedCR: currentCR * factor
             });
