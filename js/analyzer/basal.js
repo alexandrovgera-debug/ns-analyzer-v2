@@ -7,9 +7,7 @@ export default class BasalAnalyzer {
     // === расчет усредненного SR по часам ===
     buildHourlySR(srRows) {
 
-        const HOURS = 24;
-
-        const hours = Array.from({ length: HOURS }, () => ({
+        const hours = Array.from({ length: 24 }, () => ({
             sum: 0,
             count: 0,
             avg: 1
@@ -29,7 +27,6 @@ export default class BasalAnalyzer {
         }
 
         for (const h of hours) {
-
             if (h.count > 0) {
                 h.avg = h.sum / h.count;
             }
@@ -60,17 +57,14 @@ export default class BasalAnalyzer {
     }
 
     toHour(timeStr) {
-
-        // "04:30" → 4.5
         const [h, m] = timeStr.split(":").map(Number);
-
         return h + m / 60;
     }
 
     // === расчет нового базала ===
     calculateSuggestedBasal(hourSR, treatmentsByHour) {
 
-        const result = Array(24).fill(0);
+        const result = [];
 
         for (let h = 0; h < 24; h++) {
 
@@ -84,12 +78,18 @@ export default class BasalAnalyzer {
 
             let factor = sr;
 
-            // если есть еда/болюсы → уменьшаем влияние SR
             if (hasCarbsOrBolus) {
                 factor = 1 + (sr - 1) * 0.5;
             }
 
-            result[h] = basal * factor;
+            const suggested = basal * factor;
+
+            result.push({
+                basal,
+                srAvg: sr,
+                suggestedBasal: suggested,
+                cleanBasal: !hasCarbsOrBolus
+            });
         }
 
         return result;
